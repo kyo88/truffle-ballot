@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Trần Mạnh Linh",
+    "picture": "images/linhtm.jpg",
+    "age": 30,
+    "breed": "Scottish Terrier",
+    "location": "Gia Lâm"
+  },
+  {
+    "id": 2,
+    "name": "Triệu Minh Tiến",
+    "picture": "images/tientm.jpg",
+    "age": 30,
+    "breed": "Scottish Terrier",
+    "location": "Nam Định"
+  },
+  {
+    "id": 3,
+    "name": "Bùi Văn Mạnh",
+    "picture": "images/manhbv.jpg",
+    "age": 30,
+    "breed": "French Bulldog",
+    "location": "Thái Bình"
+  }
+]
