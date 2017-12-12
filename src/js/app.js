@@ -1,6 +1,8 @@
 App = {
   web3Provider: null,
   contracts: {},
+  instructorEvent: null,
+  contractIns: null,
 
   init: function() {
     // Load pets.
@@ -10,7 +12,7 @@ App = {
 
       for (i = 0; i < data.length; i ++) {
         petTemplate.find('.panel-title').text(data[i].name);
-        petTemplate.find('img').attr('src', data[i].picture);
+        petTemplate.find('#avatar').attr('src', data[i].picture);
         petTemplate.find('.candidate-age').text(data[i].age);
         petTemplate.find('.candidate-location').text(data[i].location);
         petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
@@ -45,6 +47,24 @@ App = {
       // Set the provider for our contract
       App.contracts.Ballot.setProvider(App.web3Provider);
 
+      //  Event
+      App.contracts.Ballot.deployed().then(function(instance) {
+        adoptionInstance = instance;
+        App.contractIns = instance;
+        App.instructorEvent = adoptionInstance.VoteResult();
+
+        App.instructorEvent.watch(function(error, result){
+             if (!error)
+                 {
+                     console.log('-------------------------');
+                 } else {
+                     console.log(error);
+                 }
+         });
+      }).catch(function(err) {
+        console.log(err);
+      });
+
       // Use our contract to retrieve and mark the adopted pets
       return App.markAdopted();
     });
@@ -63,12 +83,12 @@ App = {
 
       console.log(instance);
 
-      return adoptionInstance.getCounter(0);
+      return adoptionInstance.getCandidates.call();
     }).then(function(data) {
-      console.log(data.toNumber());
-      for (i = 0; i < data.length; i++) {
-        $('.panel-pet').eq(i).find('.candidate-counter').text(data[i]);
 
+      for (i = 0; i < data.length; i++) {
+        $('.panel-pet').eq(i).find('.candidate-counter').text(data[i].toNumber());
+        //console.log(data[i].toNumber());
       }
     }).catch(function(err) {
       console.log(err);
@@ -88,13 +108,16 @@ App = {
       }
 
       var account = accounts[0];
+      console.log(App.contracts.Ballot.deployed());
 
       App.contracts.Ballot.deployed().then(function(instance) {
         adoptionInstance = instance;
 
+
         // Execute adopt as a transaction by sending account
-        return adoptionInstance.vote(petId + 1);
+        return adoptionInstance.vote(petId);
       }).then(function(result) {
+        //console.log(result);
         return App.markAdopted();
       }).catch(function(err) {
         console.log(err.message);

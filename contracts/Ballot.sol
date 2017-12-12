@@ -11,6 +11,9 @@ contract Ballot {
    mapping (uint => Candidate) candidates;
    mapping (address => uint) voters;
 
+   event VoteResult(uint id, uint counter);
+   event Test(uint id);
+
    function Ballot () public {
        owner = msg.sender;
 
@@ -28,6 +31,8 @@ contract Ballot {
             winer = id;
             max = candidates[id].counter;
         }
+
+        VoteResult(id, candidate.counter);
    }
 
    function getCounter (uint id) public constant returns (uint _counter) {
@@ -38,11 +43,15 @@ contract Ballot {
        _id =  winer;
    }
 
-   function getCandidates () public returns (uint[3]) {
-        uint[3] storage data;
+   function voteChoi () public {
+      Test(1);
+   }
+
+   function getCandidates () public constant returns (uint[3] _data) {
+        uint[3] data;
         for (uint i = 0; i < 3 ;i++){
             data[i] = candidates[i+1].counter;
         }
-       return data;
+       _data =  data;
    }
 }
