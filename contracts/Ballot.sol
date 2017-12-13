@@ -14,7 +14,6 @@ contract Ballot {
    mapping (address => uint) voters;
 
    event VoteResult(uint id, uint counter);
-   event Test(uint id);
 
    function Ballot () public {
        owner = msg.sender;
@@ -43,10 +42,6 @@ contract Ballot {
 
    function getWiner () public constant returns (uint _id) {
        _id =  winer;
-   }
-
-   function voteChoi () public {
-      Test(1);
    }
 
     function getCandidates () public constant returns (uint[3] _data) {
