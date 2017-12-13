@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": 0,
     "name": "Trần Mạnh Linh",
     "picture": "images/linhtm.jpg",
     "age": 30,
@@ -8,7 +8,7 @@
     "location": "Gia Lâm"
   },
   {
-    "id": 2,
+    "id": 1,
     "name": "Triệu Minh Tiến",
     "picture": "images/tientm.jpg",
     "age": 30,
@@ -16,7 +16,7 @@
     "location": "Nam Định"
   },
   {
-    "id": 3,
+    "id": 2,
     "name": "Bùi Văn Mạnh",
     "picture": "images/manhbv.jpg",
     "age": 30,

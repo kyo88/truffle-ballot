@@ -6,6 +6,8 @@ contract Ballot {
     uint winer = 0;
     uint max = 0;
     address owner;
+    bool finish = false;
+
     struct Candidate {
         uint counter;
     }
@@ -15,15 +17,35 @@ contract Ballot {
 
    event VoteResult(uint id, uint counter);
 
+   modifier onlyOwner {
+        require(msg.sender == owner && !finish);
+        _;
+    }
+
+   modifier isOpen {
+        require(!finish);
+        _;
+   }
+
+
    function Ballot () public {
        owner = msg.sender;
 
       for (uint i = 0; i < 3 ;i++){
-          candidates[i+1] = Candidate(0);
+          candidates[i] = Candidate(0);
       }
    }
 
-   function vote (uint id) public {
+   function isFinish() returns (bool) {
+      return finish;
+   }
+
+   function finishBallot () onlyOwner public {
+        finish = true;
+   }
+
+   function vote (uint id) isOpen public {
+
         Candidate storage candidate = candidates[id];
 
         candidate.counter ++;
@@ -45,9 +67,9 @@ contract Ballot {
    }
 
     function getCandidates () public constant returns (uint[3] _data) {
-       uint[3] data;
+       uint[3] storage data;
         for (uint i = 0; i < 3; i++) {
-             data[i] = candidates[i+1].counter;
+             data[i] = candidates[i].counter;
         }
         _data = data;
     }

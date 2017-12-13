@@ -6,7 +6,7 @@ App = {
 
   init: function() {
     // Load pets.
-    $.getJSON('../pets.json', function(data) {
+    $.getJSON('../candidates.json', function(data) {
       var petsRow = $('#petsRow');
       var petTemplate = $('#petTemplate');
 
@@ -72,6 +72,8 @@ App = {
     }).catch(function(err) {
       console.log(err);
     });
+
+    return App.showWiner();
   },
 
   handleAdopt: function(event) {
@@ -98,13 +100,12 @@ App = {
         for (var i = 0; i < result.logs.length; i++) {
           var log = result.logs[i];
 
-
           if (log.event == 'VoteResult'){
             var counter = log.args.counter.toNumber();
             var id = log.args.id.toNumber();
 
             console.log($('.panel-pet').eq(id).find('.candidate-counter'));
-            $('.panel-pet').eq(id-1).find('.candidate-counter').text(counter);
+            $('.panel-pet').eq(id).find('.candidate-counter').text(counter);
             //return App.markAdopted();
           }
         }
@@ -113,6 +114,36 @@ App = {
         console.log(err.message);
       });
     });
+  },
+
+  showWiner: function (){
+    var adoptionInstance;
+
+    App.contracts.Ballot.deployed().then(function(instance) {
+      adoptionInstance = instance;
+
+      return adoptionInstance.isFinish.call();
+    }).then(function(finish) {
+      if (finish){
+        // disable vote button
+        $('.btn-adopt').prop('disabled', true);
+
+        // get winer id
+        return adoptionInstance.getWiner.call();
+      }
+      //console.log(data);
+    }).then(function(winerId){ // show winer id
+      //if (winerId.toNumber()) return ;
+
+      id = winerId.toNumber();
+      $('#ballot-result').show();
+      $.getJSON('../candidates.json', function(data) {
+        $('#winer').text(data[id].name);
+      });
+
+    }).catch(function(err) {
+      console.log(err);
+    });
   }
 
 };
@@ -120,5 +151,29 @@ App = {
 $(function() {
   $(window).load(function() {
     App.init();
+  });
+});
+
+
+
+$('#ballot-finish').click(function (){
+  var adoptionInstance;
+
+  web3.eth.getAccounts(function(error, accounts) {
+    if (error) {
+      console.log(error);
+    }
+
+    var account = accounts[0];
+
+    App.contracts.Ballot.deployed().then(function(instance) {
+      adoptionInstance = instance;
+      console.log(adoptionInstance);
+      return adoptionInstance.finishBallot();
+    }).then(function() {
+      return App.showWiner();
+    }).catch(function(err){
+      console.log(err);
+    });
   });
 });
