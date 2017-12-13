@@ -40,30 +40,11 @@ App = {
   initContract: function() {
     $.getJSON('Ballot.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
-      console.log(data);
       var BallotArtifact = data;
       App.contracts.Ballot = TruffleContract(BallotArtifact);
 
       // Set the provider for our contract
       App.contracts.Ballot.setProvider(App.web3Provider);
-
-      //  Event
-      App.contracts.Ballot.deployed().then(function(instance) {
-        adoptionInstance = instance;
-        App.contractIns = instance;
-        App.instructorEvent = adoptionInstance.VoteResult();
-
-        App.instructorEvent.watch(function(error, result){
-             if (!error)
-                 {
-                     console.log('-------------------------');
-                 } else {
-                     console.log(error);
-                 }
-         });
-      }).catch(function(err) {
-        console.log(err);
-      });
 
       // Use our contract to retrieve and mark the adopted pets
       return App.markAdopted();
@@ -80,8 +61,6 @@ App = {
 
     App.contracts.Ballot.deployed().then(function(instance) {
       adoptionInstance = instance;
-
-      console.log(instance);
 
       return adoptionInstance.getCandidates.call();
     }).then(function(data) {
@@ -108,7 +87,6 @@ App = {
       }
 
       var account = accounts[0];
-      console.log(App.contracts.Ballot.deployed());
 
       App.contracts.Ballot.deployed().then(function(instance) {
         adoptionInstance = instance;
@@ -117,8 +95,20 @@ App = {
         // Execute adopt as a transaction by sending account
         return adoptionInstance.vote(petId);
       }).then(function(result) {
-        //console.log(result);
-        return App.markAdopted();
+        for (var i = 0; i < result.logs.length; i++) {
+          var log = result.logs[i];
+
+
+          if (log.event == 'VoteResult'){
+            var counter = log.args.counter.toNumber();
+            var id = log.args.id.toNumber();
+
+            console.log($('.panel-pet').eq(id).find('.candidate-counter'));
+            $('.panel-pet').eq(id-1).find('.candidate-counter').text(counter);
+            //return App.markAdopted();
+          }
+        }
+        // return App.markAdopted();
       }).catch(function(err) {
         console.log(err.message);
       });

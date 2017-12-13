@@ -1,12 +1,14 @@
 pragma solidity ^0.4.18;
+
+
 contract Ballot {
 
-   uint winer = 0;
-   uint max = 0;
-   address owner;
-   struct Candidate {
-       uint counter;
-   }
+    uint winer = 0;
+    uint max = 0;
+    address owner;
+    struct Candidate {
+        uint counter;
+    }
 
    mapping (uint => Candidate) candidates;
    mapping (address => uint) voters;
@@ -47,11 +49,11 @@ contract Ballot {
       Test(1);
    }
 
-   function getCandidates () public constant returns (uint[3] _data) {
-        uint[3] data;
-        for (uint i = 0; i < 3 ;i++){
-            data[i] = candidates[i+1].counter;
+    function getCandidates () public constant returns (uint[3] _data) {
+       uint[3] data;
+        for (uint i = 0; i < 3; i++) {
+             data[i] = candidates[i+1].counter;
         }
-       _data =  data;
-   }
+        _data = data;
+    }
 }
